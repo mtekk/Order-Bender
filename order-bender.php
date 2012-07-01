@@ -3,7 +3,7 @@
 Plugin Name: Order Bender
 Plugin URI: http://mtekk.us/code/
 Description: Adds a metabox that allows you to set a page as the parent of a post
-Version: 0.0.1
+Version: 0.1.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.0.3';
+	protected $version = '0.1.0';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';

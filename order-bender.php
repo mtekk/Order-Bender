@@ -49,6 +49,7 @@ class mtekk_order_bender
 		$this->plugin_basename = plugin_basename(__FILE__);
 		add_action('add_meta_boxes', array($this, 'meta_boxes'));
 		add_filter('get_the_terms', array($this, 'reorder_terms'), 3, 10);
+		add_action('save_post', array($this, 'save_post'));
 	}
 	/**
 	 * Function that fires on the add_meta_boxes action
@@ -56,24 +57,49 @@ class mtekk_order_bender
 	function meta_boxes()
 	{
 		//Add our post parent metabox
-		add_meta_box('postparentdiv', __('Parent', 'mtekk-post-parents'), array($this,'parent_meta_box'), 'post', 'side', 'low');
+		add_meta_box('postparentdiv', __('Primary Cateogry', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), 'post', 'side', 'low');
 	}
 	/**
-	 * This function outputs the post parent metabox
+	 * This function outputs the primary category metabox
 	 * 
 	 * @param WP_Post $post The post object for the post being edited
 	 */
-	function parent_meta_box($post)
+	function primary_category_meta_box($post)
 	{
-		//If we use the parent_id we can sneak in with WP's styling and post save routines
-		wp_dropdown_pages(array(
-			'name' => 'parent_id',
-			'id' => 'parent_id',
+		//Nonce this bad boy up
+		wp_nonce_field($this->plugin_basename, $this->unique_prefix . '-category-prefered-nonce');
+		$pref_id = get_post_meta($post->ID, $this->unique_prefix . '_category_prefered', true);
+		//Need inline style to keep our category drop down from doing bad things width wise
+		echo "<style>#primary_cat{max-width: 100%;}</style>";
+		wp_dropdown_categories(array(
+			'name' => $this->unique_prefix . '_primary_cat',
+			'id' => 'primary_cat',
 			'echo' => 1,
 			'show_option_none' => __( '&mdash; Select &mdash;' ),
 			'option_none_value' => '0',
-			'selected' => $post->post_parent)
-		);
+			'selected' => $pref_id));
+	}
+	/**
+	 * This function hooks into the save_post action and saves our prefered category
+	 * 
+	 * @param int $post_id The ID of the post that was just saved
+	 */
+	function save_post($post_id)
+	{
+		//Exit early if the nonce fails
+		if(!wp_verify_nonce($_POST[$this->unique_prefix . '-category-prefered-nonce'], $this->plugin_basename))
+		{
+			return;
+		}
+		//Exit early if we don't have our data
+		if(!isset($_POST[$this->unique_prefix . '_primary_cat']))
+		{
+			return;
+		}
+		//Grab the prefered category ID
+		$prefered_category = absint($_POST[$this->unique_prefix . '_primary_cat']);
+		//Save the prefered category as a postmeta
+		update_post_meta($post_id, $this->unique_prefix . '_category_prefered', $prefered_category);
 	}
 	/**
 	 * This function changes the order of the input terms to place a prefered term at the top
@@ -85,8 +111,7 @@ class mtekk_order_bender
 	function reorder_terms($terms, $post_id, $taxonomy)
 	{
 		//Get the prefered category for the post here
-		get_post_meta($post_id, $this->unique_prefix . '_' . '$taxonomy' . '_prefered', true);
-		$pref_id = 16;
+		$pref_id = get_post_meta($post_id, $this->unique_prefix . '_' . $taxonomy . '_prefered', true);
 		//Make sure that ID is in the array
 		if(array_key_exists($pref_id, $terms))
 		{

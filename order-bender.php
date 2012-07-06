@@ -86,13 +86,13 @@ class mtekk_order_bender
 	 */
 	function save_post($post_id)
 	{
-		//Exit early if the nonce fails
-		if(!wp_verify_nonce($_POST[$this->unique_prefix . '-category-prefered-nonce'], $this->plugin_basename))
+		//Exit early if we don't have our data
+		if(!isset($_POST[$this->unique_prefix . '_primary_cat']))
 		{
 			return;
 		}
-		//Exit early if we don't have our data
-		if(!isset($_POST[$this->unique_prefix . '_primary_cat']))
+		//Exit early if the nonce fails
+		if(!wp_verify_nonce($_POST[$this->unique_prefix . '-category-prefered-nonce'], $this->plugin_basename))
 		{
 			return;
 		}

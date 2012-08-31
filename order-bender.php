@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.1.0';
+	protected $version = '0.2.0';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -56,7 +56,17 @@ class mtekk_order_bender
 	 */
 	function meta_boxes()
 	{
-		//Add our post parent metabox
+		global $wp_post_types;
+		foreach($wp_post_types as $post_type)
+		{
+			//We only want custom post types that are public
+			if(!$post_type->_builtin && $post_type->public)
+			{
+				//Add our primary category metabox for the current post type
+				add_meta_box('postparentdiv', __('Primary Cateogry', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), $post_type->name, 'side', 'low');
+			}
+		}
+		//Add our primary category metabox for posts
 		add_meta_box('postparentdiv', __('Primary Cateogry', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), 'post', 'side', 'low');
 	}
 	/**

@@ -63,11 +63,11 @@ class mtekk_order_bender
 			if(!$post_type->_builtin && $post_type->public)
 			{
 				//Add our primary category metabox for the current post type
-				add_meta_box('postparentdiv', __('Primary Cateogry', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), $post_type->name, 'side', 'low');
+				add_meta_box('postparentdiv', __('Primary Category', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), $post_type->name, 'side', 'low');
 			}
 		}
 		//Add our primary category metabox for posts
-		add_meta_box('postparentdiv', __('Primary Cateogry', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), 'post', 'side', 'low');
+		add_meta_box('postparentdiv', __('Primary Category', 'mtekk-order-bender'), array($this,'primary_category_meta_box'), 'post', 'side', 'low');
 	}
 	/**
 	 * This function outputs the primary category metabox

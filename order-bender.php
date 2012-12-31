@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.2.0';
+	protected $version = '0.2.1';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -85,6 +85,8 @@ class mtekk_order_bender
 			'name' => $this->unique_prefix . '_primary_cat',
 			'id' => 'primary_cat',
 			'echo' => 1,
+			'depth' => 1,
+			'hierarchical' => 1,
 			'show_option_none' => __( '&mdash; Select &mdash;' ),
 			'option_none_value' => '0',
 			'selected' => $pref_id));

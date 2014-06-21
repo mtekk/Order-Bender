@@ -3,14 +3,14 @@
 Plugin Name: Order Bender
 Plugin URI: http://mtekk.us/code/
 Description: Adds a metabox that allows you to set the prefered hierarchical taxonomy term for a post.
-Version: 0.5.0
+Version: 0.5.1
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
 TextDomain: mtekk-order-bender
 DomainPath: /languages/
 */
-/*  Copyright 2012-2013  John Havlik  (email : mtekkmonkey@gmail.com)
+/*  Copyright 2012-2014  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.5.0';
+	protected $version = '0.5.1';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -89,7 +89,7 @@ class mtekk_order_bender
 			'id' => $this->unique_prefix . '_' . $taxonomy->name . '_primary_term',
 			'class' => $this->unique_prefix . '_primary_term',
 			'echo' => 1,
-			'depth' => 1,
+			'depth' => -1,
 			'hierarchical' => 1,
 			'show_option_none' => __( '&mdash; Select &mdash;' ),
 			'option_none_value' => '0',

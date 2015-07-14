@@ -3,14 +3,14 @@
 Plugin Name: Order Bender
 Plugin URI: http://mtekk.us/code/
 Description: Adds a metabox that allows you to set the prefered hierarchical taxonomy term for a post.
-Version: 0.5.1
+Version: 0.6.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
 TextDomain: mtekk-order-bender
 DomainPath: /languages/
 */
-/*  Copyright 2012-2014  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2012-2015  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.5.1';
+	protected $version = '0.6.0';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -139,15 +139,19 @@ class mtekk_order_bender
 	{
 		//Get the prefered taxonomy term for the post here
 		$pref_id = get_post_meta($post_id, $this->unique_prefix . '_' . $taxonomy . '_prefered', true);
-		//Make sure that ID is in the array
-		if(array_key_exists($pref_id, $terms))
+		//Have to iterate over all of the terms, searching for the prefered term
+		foreach($terms as $key => $term)
 		{
-			//Store our prefered term
-			$perf_term = array($pref_id => $terms[$pref_id]);
-			//Remove it from the array
-			unset($terms[$pref_id]);
-			//Recombine the array
-			$terms = $perf_term + $terms;
+			//If the current term is the prefered term, move it to the front of the array
+			if($term->term_id === (int) $pref_id)
+			{
+				//Remove the term from the array
+				unset($terms[$key]);
+				//Place in the front of the array
+				array_unshift($terms, $term);
+				//And, now we're done
+				break;
+			}
 		}
 		//Return the array
 		return $terms;

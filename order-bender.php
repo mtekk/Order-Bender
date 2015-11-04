@@ -56,16 +56,16 @@ class mtekk_order_bender
 	 */
 	function meta_boxes()
 	{
-		global $wp_post_types, $wp_taxonomies;
-		foreach($wp_post_types as $post_type)
+		global $post, $wp_taxonomies;
+
+		foreach($wp_taxonomies as $taxonomy)
 		{
-			foreach($wp_taxonomies as $taxonomy)
+			$in_taxonomy = (has_term('', $taxonomy->name, $post));
+
+			if($in_taxonomy && $taxonomy->hierarchical)
 			{
-				if($taxonomy->hierarchical && in_array($post_type->name, $taxonomy->object_type))
-				{
-					//Add our primary category metabox for the current post type
-					add_meta_box( $this->unique_prefix . '_' . $taxonomy->name . '_primary_term_div', sprintf(__('Primary %s', 'mtekk-order-bender'), $taxonomy->labels->singular_name), array($this,'primary_taxonomy_term_meta_box'), $post_type->name, 'side', 'low', array($taxonomy));
-				}
+				//Add our primary category metabox for the current post type
+				add_meta_box( $this->unique_prefix . '_' . $taxonomy->name . '_primary_term_div', sprintf(__('Primary %s', 'mtekk-order-bender'), $taxonomy->labels->singular_name), array($this,'primary_taxonomy_term_meta_box'), $post->post_type, 'side', 'low', array($taxonomy));
 			}
 		}
 	}

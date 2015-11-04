@@ -89,7 +89,7 @@ class mtekk_order_bender
 			'id' => $this->unique_prefix . '_' . $taxonomy->name . '_primary_term',
 			'class' => $this->unique_prefix . '_primary_term',
 			'echo' => 1,
-			'depth' => -1,
+			'depth' => 0,
 			'hierarchical' => 1,
 			'show_option_none' => __( '&mdash; Select &mdash;' ),
 			'option_none_value' => '0',

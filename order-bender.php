@@ -77,8 +77,31 @@ class mtekk_order_bender
 	 */
 	function primary_taxonomy_term_meta_box($post, $callback_args)
 	{
+		global $post;
+
 		//Grab our taxonomy from the args
 		$taxonomy = $callback_args['args'][0];
+
+		// get all the terms the post belongs to
+		$terms = wp_get_post_terms( $post->ID, $taxonomy->name);
+		$used_terms = array();
+
+		// loop through the terms and collect their ids in the $used_terms array
+		foreach($terms as $term) {
+
+			// go up the hierarchy and if has parent, add the parent too to keep the hierarchical view
+			$parent_id = $term->parent;
+
+			if($parent_id) {
+				while($parent_id) {
+					$used_terms[] = $parent_id;
+					$parent_term = get_term($parent_id, $taxonomy->name);
+					$parent_id = $parent_term->parent;
+				}
+			}
+			$used_terms[] = $term->term_id;
+		}
+
 		//Nonce this bad boy up
 		wp_nonce_field($this->plugin_basename, $this->unique_prefix . '-' . $taxonomy->name . '-prefered-nonce');
 		$pref_id = get_post_meta($post->ID, $this->unique_prefix .'_' . $taxonomy->name . '_prefered', true);
@@ -92,6 +115,7 @@ class mtekk_order_bender
 			'show_option_none' => __( '&mdash; Select &mdash;' ),
 			'option_none_value' => '0',
 			'selected' => $pref_id,
+			'include'  => $used_terms,
 			'taxonomy' => $taxonomy->name));
 	}
 	/**

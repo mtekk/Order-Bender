@@ -47,25 +47,25 @@ class mtekk_order_bender
 	{
 		//We set the plugin basename here, could manually set it, but this is for demonstration purposes
 		$this->plugin_basename = plugin_basename(__FILE__);
-		add_action('add_meta_boxes', array($this, 'meta_boxes'));
+		add_action('add_meta_boxes', array($this, 'meta_boxes'), 2, 10);
 		add_filter('get_the_terms', array($this, 'reorder_terms'), 3, 10);
 		add_action('save_post', array($this, 'save_post'));
 	}
 	/**
 	 * Function that fires on the add_meta_boxes action
+	 * 
+	 * @param string $post_type The name of the post type which the current post being edited
+	 * @param WP_Post $post The WP_Post object for the current post being edited
 	 */
-	function meta_boxes()
+	function meta_boxes($post_type, $post)
 	{
-		global $wp_post_types, $wp_taxonomies;
-		foreach($wp_post_types as $post_type)
+		global $wp_taxonomies;
+		foreach($wp_taxonomies as $taxonomy)
 		{
-			foreach($wp_taxonomies as $taxonomy)
+			if($taxonomy->hierarchical && in_array($post_type, $taxonomy->object_type))
 			{
-				if($taxonomy->hierarchical && in_array($post_type->name, $taxonomy->object_type))
-				{
-					//Add our primary category metabox for the current post type
-					add_meta_box( $this->unique_prefix . '_' . $taxonomy->name . '_primary_term_div', sprintf(__('Primary %s', 'mtekk-order-bender'), $taxonomy->labels->singular_name), array($this,'primary_taxonomy_term_meta_box'), $post_type->name, 'side', 'low', array($taxonomy));
-				}
+				//Add our primary category metabox for the current post type
+				add_meta_box($this->unique_prefix . '_' . $taxonomy->name . '_primary_term_div', sprintf(__('Primary %s', 'mtekk-order-bender'), $taxonomy->labels->singular_name), array($this,'primary_taxonomy_term_meta_box'), $post_type, 'side', 'low', array($taxonomy));
 			}
 		}
 	}

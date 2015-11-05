@@ -82,8 +82,6 @@ class mtekk_order_bender
 		//Nonce this bad boy up
 		wp_nonce_field($this->plugin_basename, $this->unique_prefix . '-' . $taxonomy->name . '-prefered-nonce');
 		$pref_id = get_post_meta($post->ID, $this->unique_prefix .'_' . $taxonomy->name . '_prefered', true);
-		//Need inline style to keep our category drop down from doing bad things width wise
-		echo '<style>.' . $this->unique_prefix . '_primary_term{max-width: 100%;}</style>';
 		wp_dropdown_categories(array(
 			'name' => $this->unique_prefix . '_' . $taxonomy->name . '_primary_term',
 			'id' => $this->unique_prefix . '_' . $taxonomy->name . '_primary_term',

@@ -3,14 +3,14 @@
 Plugin Name: Order Bender
 Plugin URI: http://mtekk.us/code/
 Description: Adds a metabox that allows you to set the prefered hierarchical taxonomy term for a post.
-Version: 0.6.0
+Version: 0.7.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
 TextDomain: mtekk-order-bender
 DomainPath: /languages/
 */
-/*  Copyright 2012-2015  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2012-2016  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.6.0';
+	protected $version = '0.7.0';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -49,6 +49,7 @@ class mtekk_order_bender
 		$this->plugin_basename = plugin_basename(__FILE__);
 		add_action('add_meta_boxes', array($this, 'meta_boxes'), 2, 10);
 		add_filter('get_the_terms', array($this, 'reorder_terms'), 3, 10);
+		add_filter('bcn_pick_post_term', array($this, 'pick_bcn_term'), 3, 10);
 		add_action('save_post', array($this, 'save_post'));
 	}
 	/**
@@ -157,6 +158,8 @@ class mtekk_order_bender
 	 * @param array $terms The array of WP_Term objects
 	 * @param int $post_id The ID of the post in question
 	 * @param string $taxonomy The taxonomy of the term in question
+	 * 
+	 * @return array The reordered array of WP_Term objects
 	 */
 	function reorder_terms($terms, $post_id, $taxonomy)
 	{
@@ -178,6 +181,29 @@ class mtekk_order_bender
 		}
 		//Return the array
 		return $terms;
+	}
+	/**
+	 * This function overrides Breadcrumb NavXT's default term selection with the prefered term
+	 * 
+	 * @param WP_Term $term The WP_Term object that Breadcrumb NavXT picked as the term for the post's hierarchy
+	 * @param int $post_id The ID of the post in question
+	 * @param string $post_type The post type of the post ID passed in
+	 * 
+	 * @return WP_Term|bool The new term for Breadcrumb NavXT to use for the post's hierarchy
+	 */
+	function pick_bcn_term($term, $post_id, $post_type)
+	{
+		if($term)
+		{
+			//Get the prefered taxonomy term for the post here
+			$pref_id = get_post_meta($post_id, $this->unique_prefix . '_' . $term->taxonomy . '_prefered', true);
+			//Only can do something if the prefered taxonomy term ID was set
+			if($pref_id !== false && $pref_id !== '')
+			{
+				return get_term($pref_id, $term->taxonomy);
+			}
+		}
+		return $term;
 	}
 }
 $mtekk_order_bender = new mtekk_order_bender();

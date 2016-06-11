@@ -3,7 +3,7 @@
 Plugin Name: Order Bender
 Plugin URI: http://mtekk.us/code/
 Description: Adds a metabox that allows you to set the prefered hierarchical taxonomy term for a post.
-Version: 0.7.0
+Version: 0.7.1
 Author: John Havlik
 Author URI: http://mtekk.us/
 License: GPL2
@@ -31,7 +31,7 @@ DomainPath: /languages/
  */
 class mtekk_order_bender
 {
-	protected $version = '0.7.0';
+	protected $version = '0.7.1';
 	protected $full_name = 'Order Bender';
 	protected $short_name = 'Order Bender';
 	protected $access_level = 'manage_options';
@@ -198,7 +198,7 @@ class mtekk_order_bender
 			//Get the prefered taxonomy term for the post here
 			$pref_id = get_post_meta($post_id, $this->unique_prefix . '_' . $term->taxonomy . '_prefered', true);
 			//Only can do something if the prefered taxonomy term ID was set
-			if($pref_id !== false && $pref_id !== '')
+			if($pref_id != false && $pref_id !== '')
 			{
 				return get_term($pref_id, $term->taxonomy);
 			}

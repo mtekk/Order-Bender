@@ -202,7 +202,7 @@ class mtekk_order_bender
 			{
 				$pref_term = get_term($pref_id, $term->taxonomy);
 				//Only use the prefered term if it is actually a term
-				if($perf_term instanceof WP_Term)
+				if($pref_term instanceof WP_Term)
 				{
 					return $pref_term;
 				}
